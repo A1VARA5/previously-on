@@ -5,9 +5,10 @@ import { REST, Routes } from "discord.js";
 import { SAMPLE_MESSAGES } from "../data/sample-chat.js";
 import { SAMPLE_MESSAGES_2 } from "../data/sample-chat-2.js";
 import { SAMPLE_MESSAGES_3 } from "../data/sample-chat-3.js";
+import { SAMPLE_MESSAGES_4 } from "../data/sample-chat-4.js";
 
 // `npm run seed` posts episode 1; `npm run seed -- 2` or `-- 3` posts a later episode to catch up on.
-const EPISODES = { 2: SAMPLE_MESSAGES_2, 3: SAMPLE_MESSAGES_3 };
+const EPISODES = { 2: SAMPLE_MESSAGES_2, 3: SAMPLE_MESSAGES_3, 4: SAMPLE_MESSAGES_4 };
 const episode = EPISODES[process.argv[2]] ? Number(process.argv[2]) : 1;
 const toPost = episode === 1 ? SAMPLE_MESSAGES : EPISODES[episode].map(([author, text]) => ({ author, text }));
 
