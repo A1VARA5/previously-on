@@ -9,3 +9,8 @@
 node_modules/
 *.sqlite
 *.db
+
+# Devpost Learn skill pack copies (installed with npx skills add; skills-lock.json records it)
+.agents/
+.claude/
+agent/
