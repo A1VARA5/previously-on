@@ -39,9 +39,10 @@ client.once(Events.ClientReady, (c) => {
 // /previously: the recap. prd.md > Features and Behavior > The recap (/previously)
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand() || interaction.commandName !== "previously") return;
-  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
   const channel = interaction.channel;
+  const where = `#${channel?.name} (${interaction.guildId}/${channel?.id}) for ${interaction.user.tag}`;
   try {
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     const missing = missingPerms(channel);
     if (missing.length) return void (await interaction.editReply(STATE.noAccess(missing)));
 
@@ -53,7 +54,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
     if (messages.length === 0) return void (await interaction.editReply(STATE.quiet));
 
     const recap = await writeRecap({ channelName: channel.name, messages });
-    if (!recap.reliable) return void (await interaction.editReply(STATE.unreliable));
+    if (!recap.reliable) {
+      console.warn(`recap unreliable in ${where}: kept ${recap.lines.length}, dropped ${recap.dropped}`);
+      return void (await interaction.editReply(STATE.unreliable));
+    }
 
     const embed = recapEmbed({
       channelName: channel.name,
@@ -65,8 +69,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
     await interaction.editReply({ embeds: [embed], allowedMentions: NO_PINGS });
     console.log(`recap for ${interaction.user.tag}: ${recap.lines.length} lines, ${recap.dropped} dropped, ${usageLine(RECAP_MODEL, recap.usage)}`);
   } catch (err) {
-    console.error("recap failed:", err?.status ?? "", err?.message ?? err);
-    await interaction.editReply(STATE.broken).catch(() => {});
+    console.error(`recap failed in ${where}:`, err?.status ?? "", err?.message ?? err);
+    if (interaction.deferred || interaction.replied) {
+      await interaction.editReply(STATE.broken).catch((e) => console.error("recap: couldn't send the failure reply:", e?.message ?? e));
+    }
   }
 });
 
@@ -88,8 +94,11 @@ client.on(Events.MessageCreate, async (message) => {
     console.log(`rerun for "${msg.text}" -> ${rerun.answerMessageId} (asked ${rerun.timesAsked}x), ${usageLine(RERUN_MODEL, rerun.usage)}`);
   } catch (err) {
     // Reruns are a nice to have: when unsure or broken, stay quiet but leave a trace for the operator.
-    console.error("rerun check failed:", err?.status ?? "", err?.message ?? err);
+    console.error(`rerun check failed for message ${message.id} in #${message.channel.name}:`, err?.status ?? "", err?.message ?? err);
   }
 });
+
+client.on(Events.Error, (e) => console.error("discord client error:", e?.message ?? e));
+process.on("unhandledRejection", (e) => console.error("unhandled rejection:", e?.message ?? e));
 
 client.login(process.env.DISCORD_TOKEN);

@@ -86,13 +86,23 @@ export async function findRerun(history, newMsg) {
       },
     ],
   });
-  if (!response.parsed_output) return null;
+  if (!response.parsed_output) {
+    // The check itself failed (refusal, cut off): different from "no match", so say so.
+    console.warn(`rerun: no parsed output for ${newMsg.id}, stop_reason=${response.stop_reason}`);
+    return null;
+  }
   const grounded = groundRerun(
     response.parsed_output,
     candidates.map((c) => c.question.id),
     candidates.flatMap((c) => c.answers.map((a) => a.id)),
   );
-  if (!grounded) return null;
+  if (!grounded) {
+    const p = response.parsed_output;
+    if (p.match && p.confident) {
+      console.warn(`rerun: model claimed a match for ${newMsg.id} with ids that aren't real`, p.earlier_question_ids, p.answer_message_id);
+    }
+    return null;
+  }
   const answer = history.find((m) => m.id === grounded.answerMessageId);
   const copies = new Map(candidates.map((c) => [c.question.id, c.copies]));
   const timesAsked = grounded.earlierQuestionIds.reduce((n, id) => n + (copies.get(id) ?? 1), 0) + 1;
