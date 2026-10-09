@@ -26,7 +26,7 @@ Two questions are the same if a good answer to one fully answers the other, even
 Return:
 - match: true only if the new question is the same as at least one earlier question AND one of the listed follow up messages actually answers it.
 - earlier_question_ids: ids of every earlier question that is the same question.
-- answer_message_id: the id of the single best answer message, taken from the follow ups. Prefer a clear factual answer from a mod.
+- answer_message_id: the id of the single best answer message. It must be one of the "follow up" ids, never a question id. Prefer a clear factual answer from a mod.
 - confident: true only if you are sure. When in doubt, false.`;
 
 // Webhook posts (sample chat) share one id, so fall back to the display name.
@@ -88,7 +88,8 @@ export async function findRerun(history, newMsg) {
           // The earlier questions barely change between checks in a channel, so they're cached;
           // only the new question is paid at full price.
           { type: "text", text: `<earlier>\n${earlier}\n</earlier>`, cache_control: { type: "ephemeral" } },
-          { type: "text", text: `<new>${JSON.stringify({ id: newMsg.id, text: newMsg.text })}</new>` },
+          // No id on the new question: the answer must come from the follow ups, never the question itself.
+          { type: "text", text: `<new>${JSON.stringify({ text: newMsg.text })}</new>` },
         ],
       },
     ],

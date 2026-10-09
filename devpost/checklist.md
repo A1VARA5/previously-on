@@ -76,3 +76,5 @@ Activity mode: recap.
 - Slice 2's commit already wires the rerun listener in `src/index.js`, so it only runs together with slice 3's files. Both were verified the same session (live recap path on #bot-test, 7/7 rerun checks), so they were committed back to back.
 - Identical questions are grouped before matching: the sample chat repeats filler questions so often that the 40 most recent questions pushed the real airdrop question out of the window.
 - Prompt caching added to both Claude calls (chat and earlier questions are cached, the instruction or new question comes after), plus cost logging that counts cache writes and reads.
+- The rerun prompt no longer shows the new question's id: live in Discord the model returned the question's own id as the answer, grounding rejected it and the bot stayed silent. The sample check used the id "new", which hid it, so it now uses a real Discord style id.
+- Reruns prefer the newest copy's answers and skip duplicate answers, so a changed schedule wins over an old one.

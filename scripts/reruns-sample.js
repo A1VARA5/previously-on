@@ -18,7 +18,7 @@ const cases = [
 let pass = 0;
 let cost = 0;
 for (const [text, shouldMatch] of cases) {
-  const msg = { id: "new", author: "tester", authorId: "tester", text, time: later, isBot: false, replyTo: null };
+  const msg = { id: "1558109808152805449", author: "tester", authorId: "tester", text, time: later, isBot: false, replyTo: null };
   const r = await findRerun(SAMPLE_MESSAGES, msg);
   const ok = Boolean(r) === shouldMatch;
   pass += ok ? 1 : 0;
