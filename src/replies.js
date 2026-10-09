@@ -11,7 +11,7 @@ export function jumpLink(guildId, channelId, messageId) {
 
 export function recapEmbed({ channelName, lines, linkFor, since, readCount }) {
   const sinceUnix = since ? Math.floor(Date.parse(since) / 1000) : null;
-  const body = lines.map((l) => `${l.text} [↗](${linkFor(l.messageId)})`).join("\n\n");
+  const body = lines.map((l) => `${l.text}\n[Jump to this message](${linkFor(l.messageId)})`).join("\n\n");
   return new EmbedBuilder()
     .setColor(CRT_COLOUR)
     .setTitle(`📺 Previously on #${channelName}`)

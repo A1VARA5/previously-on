@@ -51,11 +51,12 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored: after slice 2, `/previously` in the test server
+- [x] Early usable behavior explored: after slice 2, `/previously` in the test server
 - [ ] Final kick-the-tires exploration and feedback completed
 
 ## Final Review
 
+- [ ] Recap links read "Jump to this message" instead of an arrow (learner feedback: the arrow wasn't clear)
 - [ ] Final review complete: feedback resolved and learner confirms ready to ship
 
 ## Code Tour and App Map
