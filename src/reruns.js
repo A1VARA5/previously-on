@@ -44,15 +44,22 @@ export function buildCandidates(history, newMsg) {
     groups.get(key).push(q);
   }
   const candidates = [...groups.values()].slice(-MAX_CANDIDATES).map((copies) => {
+    // Newest copies first: the latest answer is the most up to date one (schedules change),
+    // and the same answer posted twice only counts once.
     const answers = new Map();
-    for (const q of copies) {
+    const seenText = new Set();
+    for (const q of [...copies].reverse()) {
       const idx = before.indexOf(q);
       const replies = before.filter((m) => m.replyTo === q.id && !m.isBot);
       const following = before
         .slice(idx + 1)
         .filter((m) => !m.isBot && !sameAuthor(m, q))
         .slice(0, ANSWERS_PER_QUESTION);
-      for (const m of [...replies, ...following]) if (answers.size < 8) answers.set(m.id, m);
+      for (const m of [...replies, ...following]) {
+        if (answers.size >= 8 || seenText.has(m.text)) continue;
+        seenText.add(m.text);
+        answers.set(m.id, m);
+      }
     }
     return { question: copies[0], copies: copies.length, answers: [...answers.values()] };
   });
