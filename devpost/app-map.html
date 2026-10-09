@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Previously On: app map</title>
+<style>
+  :root { --bg:#f4f5f7; --card:#ffffff; --ink:#1d2129; --muted:#5b6270; --line:#d6d9df; --accent:#2b2d31; --hl:#5865f2; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#1e1f22; --card:#2b2d31; --ink:#e6e7ea; --muted:#a3a8b3; --line:#3d4048; --accent:#e6e7ea; --hl:#8c96ff; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 30px; margin: 0 0 4px; }
+  h2 { font-size: 20px; margin: 36px 0 10px; }
+  p, li { max-width: 70ch; }
+  .muted { color: var(--muted); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin: 12px 0; }
+  code { font: 14px/1.4 ui-monospace, Consolas, monospace; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
+  svg { width: 100%; height: auto; display: block; }
+  svg text { fill: var(--ink); font: 13px system-ui, sans-serif; }
+  svg .box { fill: var(--card); stroke: var(--line); }
+  svg .key { stroke: var(--hl); stroke-width: 2; }
+  svg .arrow { stroke: var(--muted); stroke-width: 1.5; fill: none; marker-end: url(#a); }
+  ol.route > li { margin-bottom: 14px; }
+  details { margin: 8px 0; }
+  summary { cursor: pointer; font-weight: 600; }
+  a { color: var(--hl); }
+  :focus-visible { outline: 3px solid var(--hl); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>📺 Previously On: app map</h1>
+  <p class="muted">A one page guide to where things live. Snapshot of the code at the commit that added this file; it can drift as the code changes.</p>
+
+  <h2>What it is</h2>
+  <p>A Discord bot with two jobs. <code>/previously</code> gives you a private, TV narrator style recap of what you missed in a channel, every line linked to the real message. <strong>Reruns</strong> reply to a question the channel already answered, with a link to the answer and how many times it's been asked.</p>
+  <p>The main pieces: the bot entry (<code>src/index.js</code>), a history reader (Discord already stores the chat, so nothing is saved), two Claude calls (Opus for recaps, Haiku for reruns), and a grounding check in plain code that decides what's real.</p>
+
+  <h2>One action, end to end: typing <code>/previously</code></h2>
+  <div class="card">
+    <svg viewBox="0 0 820 170" role="img" aria-labelledby="dtitle">
+      <title id="dtitle">You type /previously, the bot reads the channel history, Claude writes lines with message ids, the grounding check keeps only real ones, and a private embed comes back.</title>
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+      <rect class="box" x="5" y="50" width="135" height="70" rx="8"/><text x="72" y="80" text-anchor="middle">You type</text><text x="72" y="100" text-anchor="middle">/previously</text>
+      <rect class="box" x="170" y="50" width="135" height="70" rx="8"/><text x="237" y="80" text-anchor="middle">fetchRecent</text><text x="237" y="100" text-anchor="middle">sinceYouLeft</text>
+      <rect class="box" x="335" y="50" width="135" height="70" rx="8"/><text x="402" y="80" text-anchor="middle">writeRecap</text><text x="402" y="100" text-anchor="middle">(Claude Opus)</text>
+      <rect class="box key" x="500" y="50" width="135" height="70" rx="8"/><text x="567" y="80" text-anchor="middle">groundRecap</text><text x="567" y="100" text-anchor="middle">drops fake ids</text>
+      <rect class="box" x="665" y="50" width="150" height="70" rx="8"/><text x="740" y="80" text-anchor="middle">Private embed</text><text x="740" y="100" text-anchor="middle">+ jump links</text>
+      <path class="arrow" d="M140,85 L168,85" style="color:var(--muted)"/><path class="arrow" d="M305,85 L333,85" style="color:var(--muted)"/>
+      <path class="arrow" d="M470,85 L498,85" style="color:var(--muted)"/><path class="arrow" d="M635,85 L663,85" style="color:var(--muted)"/>
+      <text x="402" y="150" text-anchor="middle" class="muted">chat block is prompt cached: a repeat recap costs ~$0.009 instead of ~$0.057</text>
+    </svg>
+  </div>
+
+  <h2>Reference route (3 stops)</h2>
+  <ol class="route">
+    <li><strong>Entry:</strong> <code>src/index.js</code>, search for <code>Events.InteractionCreate</code>. Defers a private reply, checks permissions, reads history, handles the quiet, missing permission and failure states.</li>
+    <li><strong>The model call:</strong> <code>src/recap.js</code>, function <code>writeRecap</code>. Sends the chat as data with <code>cache_control</code> on the chat block and asks for JSON lines that each name a <code>message_id</code>.</li>
+    <li><strong>The part that keeps it honest:</strong> <code>src/grounding.js</code>, function <code>groundRecap</code>. Keeps only lines whose id is a real message we sent, in chat order, max 6, links and slurs stripped. Tested in <code>test/grounding.test.js</code>.</li>
+  </ol>
+  <details>
+    <summary>Same idea for reruns</summary>
+    <p><code>src/index.js</code> <code>Events.MessageCreate</code> → <code>src/questions.js</code> <code>looksLikeQuestion</code> → <code>src/reruns.js</code> <code>buildCandidates</code> (groups identical questions so spam can't push the real one out) and <code>findRerun</code> (Claude Haiku, earlier questions cached) → <code>src/grounding.js</code> <code>groundRerun</code> (needs <code>confident: true</code> and real ids, otherwise the bot stays quiet).</p>
+  </details>
+
+  <h2>To change this, start here</h2>
+  <ul>
+    <li><strong>The recap's voice or what it picks:</strong> the <code>SYSTEM</code> prompt in <code>src/recap.js</code>.</li>
+    <li><strong>How the recap looks:</strong> <code>recapEmbed</code> in <code>src/replies.js</code> (title, colour <code>CRT_COLOUR</code>, "Jump to this message" links).</li>
+    <li><strong>The rerun wording or the 💀 counter:</strong> <code>rerunText</code> in <code>src/replies.js</code>.</li>
+    <li><strong>What counts as a question:</strong> <code>QUESTION_WORDS</code> in <code>src/questions.js</code>, with tests in <code>test/questions.test.js</code>.</li>
+    <li><strong>Cooldown, how far back to read:</strong> <code>COOLDOWN_MS</code> in <code>src/reruns.js</code>, <code>MAX_MESSAGES</code> in <code>src/history.js</code>.</li>
+    <li><strong>Models and prices:</strong> <code>src/claude.js</code>.</li>
+  </ul>
+
+  <h2>A practice to reuse</h2>
+  <div class="card">
+    <p><strong>Make the model cite, then let code check the citation.</strong> The spec's open question was how to stop a summary inventing things (<code>devpost/spec.md</code> → Decisions and Open Issues). The answer: every line the model writes must carry the id of the message it came from, and <code>groundRecap</code> / <code>groundRerun</code> throw away anything that doesn't match a real message. <code>npm run reruns:sample</code> checks it end to end (7 of 7 questions behave as expected), and <code>test/grounding.test.js</code> checks the code half with no API calls.</p>
+    <p>Works anywhere an AI summarises or answers from data you hold: support tickets, docs, meeting notes. Give every source an id, require ids in structured output, verify in code, show the link.</p>
+  </div>
+
+  <h2>Run it again</h2>
+  <ol>
+    <li><code>npm install</code>, fill in <code>.env</code> (see <code>.env.example</code> and the README).</li>
+    <li><code>npm run register</code>, then optionally <code>npm run seed</code> (sample chat) or <code>npm run seed -- 2</code> (a fresh episode to catch up on).</li>
+    <li><code>npm start</code>, then type <code>/previously</code> in the channel.</li>
+    <li>No Discord? <code>npm run recap:sample</code> and <code>npm run reruns:sample</code>. Tests: <code>npm test</code>.</li>
+  </ol>
+</main>
+</body>
+</html>

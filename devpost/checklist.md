@@ -52,24 +52,24 @@ Build mode: fast
 ## Hands-on Checkpoints
 
 - [x] Early usable behavior explored: after slice 2, `/previously` in the test server
-- [ ] Final kick-the-tires exploration and feedback completed
+- [x] Final kick-the-tires exploration and feedback completed
 
 ## Final Review
 
-- [ ] Recap links read "Jump to this message" instead of an arrow (learner feedback: the arrow wasn't clear)
-- [ ] Final review complete: feedback resolved and learner confirms ready to ship
+- [x] Recap links read "Jump to this message" instead of an arrow (learner feedback: the arrow wasn't clear)
+- [x] Final review complete: feedback resolved and learner confirms ready to ship
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete: guided route, focused alternative, prior practice connected, or brief recap
-- [ ] Optional edit and transfer reflection addressed: offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] Learning activity complete: guided route, focused alternative, prior practice connected, or brief recap
+- [x] Optional edit and transfer reflection addressed: offered/declined/already covered/not applicable as appropriate
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence:
-Route and stops:
-Edit outcome:
-Reflection:
-Activity mode:
+Activity and evidence: brief evidence based recap (learner chose to move on to shipping). Ties to the learning goal "summarise chaos without making stuff up": grounding in `src/grounding.js`, `test/grounding.test.js` (13 tests pass) and `npm run reruns:sample` (7/7).
+Route and stops: reference route only, not toured: `src/index.js` Events.InteractionCreate, `src/recap.js` writeRecap, `src/grounding.js` groundRecap.
+Edit outcome: not applicable (the learner's own change, "Jump to this message" links, already landed in final review).
+Reflection: not offered, learner asked to go straight to shipping.
+Activity mode: recap.
 
 ## Revisions
 
