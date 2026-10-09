@@ -1,0 +1,25 @@
+{
+  "name": "previously-on",
+  "version": "0.1.0",
+  "description": "A Discord bot that remembers what your server said and tells it back like a TV show.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "register": "node scripts/register.js",
+    "seed": "node scripts/seed.js",
+    "recap:sample": "node scripts/recap-sample.js",
+    "reruns:sample": "node scripts/reruns-sample.js",
+    "test": "node --test \"test/*.test.js\""
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.132.1",
+    "discord.js": "^14.27.0",
+    "dotenv": "^18.0.6",
+    "zod": "^4.6.5"
+  }
+}
