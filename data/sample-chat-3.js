@@ -1,0 +1,33 @@
+// SAMPLE DATA, episode 3: a normal day in a gaming and study community server.
+// Made up people and events. Nothing here is real.
+
+export const SAMPLE_MESSAGES_3 = [
+  ["kasia_mod", "📢 Game night moved from Thursday to Saturday 8pm UK time. Same voice channel. Bring snacks, bring friends."],
+  ["lina", "saturday works way better tbh"],
+  ["daveyboi", "is game night still thursday?"],
+  ["lina", "dave it's literally the message above yours"],
+  ["daveyboi", "in my defence I only read the last message"],
+  ["quietkate", "is the community call still on friday?"],
+  ["tom_mod", "Yes, community call is still Friday 7pm UK time on the Discord stage. We're doing the server roadmap and a Q&A.", { replyTo: 5 }],
+  ["hotdog_hater", "anyone else's flat smell like fish? my flatmate microwaved salmon at 9am"],
+  ["ser_gamer", "that's a hate crime"],
+  ["hotdog_hater", "he said it's 'brain food' for his exam"],
+  ["quietkate", "did he pass"],
+  ["hotdog_hater", "exam's tomorrow. the smell is forever"],
+  ["mr_fomo", "what time is the call on friday"],
+  ["lina", "7pm, tom answered like 10 minutes ago 😭"],
+  ["kasia_mod", "Heads up: the bot channel is down for maintenance tonight from 10pm, should be back by midnight."],
+  ["daveyboi", "update: I fell asleep in the library and woke up locked in. security let me out at 11"],
+  ["ser_gamer", "dave you are the main character of this server and it's not a good thing"],
+  ["mr_fomo", "anyone got notes for the algorithms lecture?"],
+  ["quietkate", "uploaded mine to #study-notes, lecture 4 is the dijkstra one"],
+  ["mr_fomo", "legend thank you"],
+  ["tom_mod", "Reminder: no spoilers for the new season outside #spoilers. Two people already got timed out today."],
+  ["ser_gamer", "I said ONE thing"],
+  ["tom_mod", "you said the whole ending"],
+  ["lina", "ser you have a gift for ruining things"],
+  ["hotdog_hater", "update on the fish situation: flatmate is now doing a 'brain food' omelette. with the leftover salmon"],
+  ["quietkate", "move out"],
+  ["daveyboi", "wait is the community call friday or saturday"],
+  ["lina", "friday call, saturday game night. I'm making a calendar for you dave"],
+];

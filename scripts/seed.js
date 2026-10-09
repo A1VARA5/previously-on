@@ -4,10 +4,12 @@ import "dotenv/config";
 import { REST, Routes } from "discord.js";
 import { SAMPLE_MESSAGES } from "../data/sample-chat.js";
 import { SAMPLE_MESSAGES_2 } from "../data/sample-chat-2.js";
+import { SAMPLE_MESSAGES_3 } from "../data/sample-chat-3.js";
 
-// `npm run seed` posts episode 1, `npm run seed -- 2` posts episode 2 (new chat to catch up on).
-const episode = process.argv[2] === "2" ? 2 : 1;
-const toPost = episode === 2 ? SAMPLE_MESSAGES_2.map(([author, text]) => ({ author, text })) : SAMPLE_MESSAGES;
+// `npm run seed` posts episode 1; `npm run seed -- 2` or `-- 3` posts a later episode to catch up on.
+const EPISODES = { 2: SAMPLE_MESSAGES_2, 3: SAMPLE_MESSAGES_3 };
+const episode = EPISODES[process.argv[2]] ? Number(process.argv[2]) : 1;
+const toPost = episode === 1 ? SAMPLE_MESSAGES : EPISODES[episode].map(([author, text]) => ({ author, text }));
 
 const { DISCORD_TOKEN, DISCORD_CHANNEL_ID } = process.env;
 if (!DISCORD_TOKEN || !DISCORD_CHANNEL_ID) {
