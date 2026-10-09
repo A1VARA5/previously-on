@@ -9,7 +9,7 @@ Build mode: fast
 
 ## Slices
 
-- [ ] **1. A grounded recap from sample chat**
+- [x] **1. A grounded recap from sample chat**
   Becomes usable: `npm run recap:sample` reads a realistic sample channel and prints a TV narrator recap where every line names the real message it came from. Lines pointing at messages that don't exist are dropped.
   Why now: The kernel and the riskiest part (Claude writing a funny but grounded recap) get proven first, before any Discord setup. Bootstrapping (package.json, deps, .env) happens here.
   PRD ref: `prd.md > Features and Behavior > The recap (/previously)`, `prd.md > Product Decisions`
@@ -19,7 +19,7 @@ Build mode: fast
   Learner check: Run `npm run recap:sample` and read the recap. Does it sound like a TV narrator and pick the stuff that matters?
   Commit: `Recap writer with grounding check`
 
-- [ ] **2. /previously works in Discord**
+- [x] **2. /previously works in Discord**
   Becomes usable: In the test server, typing `/previously` gives a private "📺 Previously on #channel" embed with jump links, covering messages since you last spoke.
   Why now: Puts the kernel where people actually use it. Needs the Discord app, token and test server.
   PRD ref: `prd.md > The Core Journey` (steps 1 to 5), `prd.md > Screens and Layout`, `prd.md > Look and Feel`
@@ -29,7 +29,7 @@ Build mode: fast
   Learner check: In the test server, type `/previously` and click a couple of the links.
   Commit: `Previously command in Discord`
 
-- [ ] **3. Reruns for repeat questions**
+- [x] **3. Reruns for repeat questions**
   Becomes usable: Posting a question the channel already answered gets a "📺 Rerun!" reply with the link to the old answer and a times asked count. New questions get nothing.
   Why now: Second half of the kernel, built on the same History Reader.
   PRD ref: `prd.md > Features and Behavior > Reruns`
@@ -39,7 +39,7 @@ Build mode: fast
   Learner check: In the test server, ask "wen airdrop??" and then a question nobody asked before.
   Commit: `Reruns for repeat questions`
 
-- [ ] **4. Honest edge cases**
+- [x] **4. Honest edge cases**
   Becomes usable: Quiet channel, too much history, missing permission and Claude failures all show clear messages instead of silence or a fake recap; nobody gets rerun twice in 10 minutes; README explains setup.
   Why now: The demo is solid once the happy path works; these keep it from embarrassing anyone on camera.
   PRD ref: `prd.md > States and Boundaries`
@@ -71,3 +71,7 @@ Reflection:
 Activity mode:
 
 ## Revisions
+
+- Slice 2's commit already wires the rerun listener in `src/index.js`, so it only runs together with slice 3's files. Both were verified the same session (live recap path on #bot-test, 7/7 rerun checks), so they were committed back to back.
+- Identical questions are grouped before matching: the sample chat repeats filler questions so often that the 40 most recent questions pushed the real airdrop question out of the window.
+- Prompt caching added to both Claude calls (chat and earlier questions are cached, the instruction or new question comes after), plus cost logging that counts cache writes and reads.
